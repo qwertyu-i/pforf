@@ -9,3 +9,4 @@ p.run("1 1+ 1+ 1+")
 p.run("0 IF 0 THEN 4 ELSE IF 4 THEN 0 ELSE")
 # nested ifs test
 p.run("1 IF 0 IF 0 THEN 4 ELSE THEN 0 ELSE")
+p.run("1 3 0 DO 1 + LOOP")

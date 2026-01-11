@@ -1,8 +1,7 @@
 # Interpreter for a forth-like language (not following any specific standards)
 #                                        ^--(this is why it's forf not forth)
 
-# TODO: add : and ; for coldef
-# not big concerns: add doubles and the respective words for them
+#TODO: evaluation function, coldef
 
 class Pforf:
     def __init__(self):
@@ -57,8 +56,18 @@ class Pforf:
             # THEN is handled by IF
             "THEN": lambda: self.thenWord(),
             "ELSE": lambda: None,
+            "DO": lambda: self.doWord(),
+            "LOOP": lambda: None
         }
 
+    def searchNext(self, word):
+        searchArea = self.tokens[self.ip:]
+        index = 0
+        for token in searchArea:
+            if token == word:
+                return index
+            index += 1
+        
     def ifWord(self):
         searchArea = self.tokens[self.ip:]
         if self.stack.pop() == 0:
@@ -74,13 +83,31 @@ class Pforf:
         # no need to check for truth since reaching THEN will skip ELSE
 
     def thenWord(self):
-        searchArea = self.tokens[self.ip:]
-        index = 0
-        for token in searchArea:
-            if token == "ELSE":
-                self.ip += index
-                return
+        self.ip += self.searchNext("ELSE")
+
+    def doWord(self):
+        index = self.stack.pop()
+        ceil = self.stack.pop()
+        start = self.ip + 1
+        end = self.searchNext("LOOP") + start - 1
+        loopTokens = self.tokens[start:end]
+        loopIp = 0
+        # turn this loop into an eval function
+        while index < ceil:
+            while loopIp < len(loopTokens):
+                token = loopTokens[loopIp]
+                if token in self.dictionary:
+                    self.dictionary[token]()
+                else:
+                    try:
+                        # type check later, adds unrecognised tokens as floats
+                        self.stack.append(float(token))
+                    except ValueError:
+                        raise SyntaxError(f"Unknown word: {token}")
+                loopIp += 1
+            loopIp = 0
             index += 1
+        self.ip = end
 
     def run(self, code):
         self.ip = 0
