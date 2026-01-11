@@ -59,6 +59,23 @@ class Pforf:
             "DO": lambda: self.doWord(),
             "LOOP": lambda: None
         }
+    def skip_until(self, targets):
+        # increase when we find another if since we don't want to end early
+        depth = 0
+        while self.ip < len(self.tokens) - 1:
+            self.ip += 1
+            token = self.tokens[self.ip]
+
+            if token == "IF":
+                depth += 1
+            elif token == "ELSE":
+                if depth == 0 and "ELSE" in targets:
+                    return
+                depth -= 1
+            elif token == "THEN" and depth == 0 and "THEN" in targets:
+                return
+
+        raise SyntaxError(f"Missing terminator {targets}")
 
     def searchNext(self, word):
         searchArea = self.tokens[self.ip:]
@@ -69,21 +86,11 @@ class Pforf:
             index += 1
         
     def ifWord(self):
-        searchArea = self.tokens[self.ip:]
         if self.stack.pop() == 0:
-            # there's probably a more elegant/sensible way to keep track of
-            # current index and token
-            index = 0
-            for token in searchArea:
-                if token == "ELSE" or token == "THEN":
-                    self.ip += index
-                    return
-                index += 1
-            raise SyntaxError(f"Incomplete if statement at token #{index}.")
-        # no need to check for truth since reaching THEN will skip ELSE
+            self.skip_until(["THEN", "ELSE"])
 
     def thenWord(self):
-        self.ip += self.searchNext("ELSE")
+        self.skip_until(["ELSE"])
 
     def doWord(self):
         index = self.stack.pop()
