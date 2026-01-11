@@ -54,9 +54,8 @@ class Pforf:
             "ABS": lambda: self.stack.append(abs(self.stack.pop())),
             "AND": lambda: self.stack.append(1 if self.stack.pop() == self.stack.pop() else 0),
             "IF": lambda: self.ifWord(),
-            # if "ELSE" or "THEN" are encountered, skip for now, add checks for
-            # that later
-            "THEN": lambda: None,
+            # THEN is handled by IF
+            "THEN": lambda: self.thenWord(),
             "ELSE": lambda: None,
         }
 
@@ -72,6 +71,16 @@ class Pforf:
                     return
                 index += 1
             raise SyntaxError(f"Incomplete if statement at token #{index}.")
+        # no need to check for truth since reaching THEN will skip ELSE
+
+    def thenWord(self):
+        searchArea = self.tokens[self.ip:]
+        index = 0
+        for token in searchArea:
+            if token == "ELSE":
+                self.ip += index
+                return
+            index += 1
 
     def run(self, code):
         self.ip = 0
