@@ -1,0 +1,4 @@
+: OUTBEER CR DUP . SPACE ." bottles of beer on the wall," . CR DUP . SPACE ." bottles of beer..." . CR ." Take one down, pass it around," . CR . SPACE ." bottles of beer on the wall." . CR ;
+: ONEBEER CR 1 . SPACE ." bottle of beer on the wall," . CR 1 . SPACE ." bottle of beer..." . CR ." Take one down, pass it around," . CR 1 . SPACE ." bottle of beer on the wall." . CR ;
+
+100 0 DO I 98 = 0= IF 99 I - OUTBEER THEN ONEBEER ELSE LOOP
