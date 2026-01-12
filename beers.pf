@@ -1,4 +1,4 @@
-: BEER DUP DUP 1 = IF . SPACE ." bottle" ELSE . SPACE ." bottles" THEN ;
-: OUTBEER CR BEER . SPACE ." of beer on the wall," . CR BEER . SPACE ." of beer..." . CR ." Take one down, pass it around," . CR 1 - BEER . SPACE ." of beer on the wall." . CR ;
+: BEER DUP DUP 1 = IF . SPACE ." bottle" CONCAT ELSE . SPACE ." bottles" CONCAT THEN ;
+: OUTBEER CR BEER . SPACE ." of beer on the wall," CONCAT . CR BEER . SPACE ." of beer..." CONCAT . CR ." Take one down, pass it around," . CR 1 - BEER . SPACE ." of beer on the wall." CONCAT . CR ;
 
 100 0 DO 99 I - 0= 0= IF 99 I - OUTBEER ELSE CR ." no more bottles of beer on the wall..." . THEN LOOP

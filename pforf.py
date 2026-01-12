@@ -75,13 +75,19 @@ class Pforf:
             "\"": None,
             ".": lambda: print(self.stack.pop(), end = ""),
             "CR": lambda: print(),
-            "SPACE": lambda: print(" ", end = "")
+            "SPACE": lambda: self.stack.append(" "),
+            "CONCAT": self.concatWord
         }
 
         # definitions will be "WORD: thread"
         # this takes priority over primitives
         self.wordDictionary = {}
 
+
+    def concatWord(self):
+        a = self.stack.pop()
+        b = self.stack.pop()
+        self.stack.append(f"{b}{a}")
 
     def swapWord(self):
         a = self.stack.pop()
