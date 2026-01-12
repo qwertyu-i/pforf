@@ -36,6 +36,7 @@ class Pforf:
             "2-": lambda: self.stack.append(self.stack.pop() - 2),
             # floor division
             "2/": lambda: self.stack.append(self.stack.pop() // 2),
+            "2*": lambda: self.stack.append(self.stack.pop() * 2),
             "4+": lambda: self.stack.append(self.stack.pop() + 4),
             "4-": lambda: self.stack.append(self.stack.pop() - 4),
             "<": lambda: self.stack.append(1 if self.stack.pop(-2) < self.stack.pop(-1) else 0),
@@ -50,6 +51,9 @@ class Pforf:
             # also no words for controlling memory will be added
             "+": lambda: self.stack.append(self.stack.pop(-2) + self.stack.pop(-1)),
             "-": lambda: self.stack.append(self.stack.pop(-2) - self.stack.pop(-1)),
+            # not floor division
+            "/": lambda: self.stack.append(self.stack.pop(-2) / self.stack.pop(-1)),
+            "*": lambda: self.stack.append(self.stack.pop() * self.stack.pop()),
             "SWAP": self.swapWord,
             # duplicates head if non-zero
             # also a cool trick to append conditionally i got from ai
@@ -63,6 +67,7 @@ class Pforf:
             "ELSE": self.elseWord,
             "DO": self.doWord,
             "LOOP": self.loopWord,
+            "LEAVE": self.leaveWord,
             "I": self.iWord,
             ":": self.colWord,
             ";": lambda: None,
@@ -138,6 +143,11 @@ class Pforf:
             self.ip = loop["start"] - 1
         else:
             self.loop_stack.pop()
+
+    def leaveWord(self):
+        if not self.loop_stack:
+            raise SyntaxError("No LOOP to LEAVE")
+        self.loop_stack[-1]["index"] = self.loop_stack[-1]["limit"]
 
     def colWord(self):
         self.ip += 1
