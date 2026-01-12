@@ -218,7 +218,7 @@ class Pforf:
         while self.ip < len(self.tokens):
             if self.tokens[self.ip].endswith('"'):
                 full_string = " ".join(self.tokens[start_ip : self.ip + 1])
-                self.stack.append(full_string.rstrip('"'))
+                self.stack.append(full_string[0:len(full_string) - 1])
                 return
             self.ip += 1
             
