@@ -59,9 +59,8 @@ class Pforf:
             "AND": lambda: self.stack.append(1 if self.stack.pop() == self.stack.pop() else 0),
             "OR": lambda: self.stack.append(1 if self.stack.pop() == True or self.stack.pop() == True else 0),
             "IF": self.ifWord,
-            # THEN is handled by IF
-            "THEN": self.thenWord,
-            "ELSE": lambda: None,
+            "THEN": lambda: None,
+            "ELSE": self.elseWord,
             "DO": self.doWord,
             "LOOP": self.loopWord,
             "I": self.iWord,
@@ -107,10 +106,10 @@ class Pforf:
 
     def ifWord(self):
         if self.stack.pop() == 0:
-            self.skip_until(["THEN"])
+            self.skip_until(["ELSE"])
 
-    def thenWord(self):
-        self.skip_until(["ELSE"])
+    def elseWord(self):
+        self.skip_until(["THEN"])
 
     def doWord(self):
         index = self.stack.pop()
