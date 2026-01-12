@@ -95,11 +95,11 @@ class Pforf:
             self.ip += 1
             token = self.tokens[self.ip]
 
-            # 1. Check if we found our target at the CURRENT nesting level
-            if depth == 0 and token in targets:
+            # correct LOOP has depth of -1
+            if token in targets and (depth == 0 or (token == "LOOP" and depth == -1)):
                 return
 
-            # 2. Track nesting depth
+            # track depth
             if token in ["IF", "DO"]:
                 depth += 1
             elif token == "THEN":
@@ -147,7 +147,8 @@ class Pforf:
     def leaveWord(self):
         if not self.loop_stack:
             raise SyntaxError("No LOOP to LEAVE")
-        self.loop_stack[-1]["index"] = self.loop_stack[-1]["limit"]
+        self.loop_stack.pop()
+        self.skip_until(["LOOP"])
 
     def colWord(self):
         self.ip += 1
